@@ -1,0 +1,98 @@
+package com.banking.controller;
+
+import com.banking.dto.AccountDTO;
+import com.banking.service.AccountService;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * REST controller for managing bank accounts.
+ * Provides CRUD endpoints for the Account entity.
+ */
+@RestController
+@RequestMapping("/api/accounts")
+@AllArgsConstructor
+public class AccountController {
+
+    private final AccountService accountService;
+
+    /**
+     * POST /api/accounts
+     * Creates a new account for a customer.
+     *
+     * @param accountDTO the account data
+     * @return the created account with HTTP 201 (Created)
+     */
+    @PostMapping
+    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDTO accountDTO) {
+        AccountDTO createdAccount = accountService.createAccount(accountDTO);
+        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+    }
+
+    /**
+     * GET /api/accounts
+     * Retrieves all accounts.
+     * Optionally filter by customerId query parameter.
+     *
+     * @param customerId optional customer ID to filter accounts
+     * @return list of accounts with HTTP 200 (OK)
+     */
+    @GetMapping
+    public ResponseEntity<List<AccountDTO>> getAllAccounts(
+            @RequestParam(required = false) Long customerId) {
+        List<AccountDTO> accounts;
+        if (customerId != null) {
+            accounts = accountService.getAccountsByCustomerId(customerId);
+        } else {
+            accounts = accountService.getAllAccounts();
+        }
+        return ResponseEntity.ok(accounts);
+    }
+
+    /**
+     * GET /api/accounts/{id}
+     * Retrieves an account by its ID.
+     *
+     * @param id the account ID
+     * @return the account with HTTP 200 (OK)
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<AccountDTO> getAccountById(@PathVariable Long id) {
+        AccountDTO account = accountService.getAccountById(id);
+        return ResponseEntity.ok(account);
+    }
+
+    /**
+     * PUT /api/accounts/{id}
+     * Updates an existing account.
+     *
+     * @param id the account ID
+     * @param accountDTO the updated account data
+     * @return the updated account with HTTP 200 (OK)
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<AccountDTO> updateAccount(
+            @PathVariable Long id,
+            @Valid @RequestBody AccountDTO accountDTO) {
+        AccountDTO updatedAccount = accountService.updateAccount(id, accountDTO);
+        return ResponseEntity.ok(updatedAccount);
+    }
+
+    /**
+     * DELETE /api/accounts/{id}
+     * Deletes an account by its ID.
+     *
+     * @param id the account ID
+     * @return HTTP 204 (No Content)
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
+        accountService.deleteAccount(id);
+        return ResponseEntity.noContent().build();
+    }
+}
