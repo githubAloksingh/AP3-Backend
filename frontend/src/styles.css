@@ -1,0 +1,48 @@
+/* Global Premium Styling */
+body {
+  background-color: #f4f6f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #333333;
+}
+
+/* Card Styling */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Rounded Utilities */
+.rounded-4 {
+  border-radius: 1rem !important;
+}
+
+/* Min Height Utility */
+.min-vh-75 {
+  min-height: 75vh;
+}
+
+/* Gradient buttons and brands */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+}
+
+.text-primary {
+  color: #0d6efd !important;
+}
+
+.border-primary {
+  border-color: #0d6efd !important;
+}
+
+/* Custom shadow utilities */
+.shadow-sm {
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+}
+
+.shadow {
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}

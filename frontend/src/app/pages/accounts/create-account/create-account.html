@@ -1,0 +1,68 @@
+<div class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow border-0 rounded-4">
+        <div class="card-body p-5">
+          <h2 class="fw-bold mb-4 text-center">Open New Account</h2>
+
+          <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ errorMessage }}
+          </div>
+
+          <form (ngSubmit)="onSubmit()" #accountForm="ngForm">
+            <div class="mb-3">
+              <label for="accountType" class="form-label">Account Type</label>
+              <select
+                id="accountType"
+                name="accountType"
+                class="form-select form-select-lg rounded-3"
+                [(ngModel)]="accountType"
+                required
+              >
+                <option value="SAVINGS">Savings Account</option>
+                <option value="CURRENT">Current Account</option>
+              </select>
+              <div class="form-text">Choose Savings for standard interests or Current for business needs.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="initialBalance" class="form-label">Initial Balance (INR)</label>
+              <div class="input-group input-group-lg">
+                <span class="input-group-text rounded-start-3">₹</span>
+                <input
+                  type="number"
+                  id="initialBalance"
+                  name="initialBalance"
+                  class="form-control rounded-end-3"
+                  placeholder="0.00"
+                  [(ngModel)]="initialBalance"
+                  min="0"
+                  required
+                />
+              </div>
+              <div class="form-text">Enter an initial deposit amount. Must be 0 or more.</div>
+            </div>
+
+            <div class="row g-2">
+              <div class="col-6">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg w-100 rounded-3"
+                  [disabled]="loading || !accountForm.valid"
+                >
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                  Open Account
+                </button>
+              </div>
+              <div class="col-6">
+                <a routerLink="/accounts" class="btn btn-outline-secondary btn-lg w-100 rounded-3">
+                  Cancel
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<div class="container my-4">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="p-4 bg-light rounded-4 shadow-sm d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+          <h1 class="h3 mb-1 fw-bold text-dark">Welcome back, {{ authService.getFullName() }}!</h1>
+          <p class="text-muted mb-0">Here is a quick overview of your banking dashboard.</p>
+        </div>
+        <div class="mt-2 mt-md-0">
+          <a routerLink="/accounts/create" class="btn btn-primary d-flex align-items-center">
+            <span class="fs-5 me-2">+</span> Open New Account
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage()" class="alert alert-danger" role="alert">
+    {{ errorMessage() }}
+  </div>
+
+  <div *ngIf="loading()" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading() && !errorMessage()" class="row">
+    <!-- Balance & Account count summary cards -->
+    <div class="col-md-6 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 bg-primary text-white h-100 p-3">
+        <div class="card-body">
+          <h6 class="text-uppercase text-white-50 fw-bold">Total Net Worth</h6>
+          <h2 class="display-5 fw-bold mb-2">{{ totalBalance() | currency:'INR':'symbol' }}</h2>
+          <span class="badge bg-white text-primary rounded-pill">Safe & Secured</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card border-0 shadow-sm rounded-4 bg-success text-white h-100 p-3">
+        <div class="card-body">
+          <h6 class="text-uppercase text-white-50 fw-bold">Active Accounts</h6>
+          <h2 class="display-5 fw-bold mb-2">{{ accounts().length }}</h2>
+          <span class="badge bg-white text-success rounded-pill">Savings & Current</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accounts list -->
+    <div class="col-12 mt-2">
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+          <h5 class="fw-bold text-dark">My Accounts</h5>
+        </div>
+        <div class="card-body p-4">
+          <div *ngIf="accounts().length === 0" class="text-center py-4">
+            <p class="text-muted mb-3">You don't have any open accounts yet.</p>
+            <a routerLink="/accounts/create" class="btn btn-outline-primary btn-sm">Get Started</a>
+          </div>
+
+          <div *ngIf="accounts().length > 0" class="table-responsive">
+            <table class="table align-middle table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="border-0">Account Number</th>
+                  <th scope="col" class="border-0">Type</th>
+                  <th scope="col" class="border-0 text-end">Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let account of accounts()">
+                  <td>
+                    <span class="font-monospace fw-bold text-dark">{{ account.accountNumber }}</span>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill" [ngClass]="account.accountType === 'SAVINGS' ? 'bg-info-subtle text-info-emphasis' : 'bg-warning-subtle text-warning-emphasis'">
+                      {{ account.accountType }}
+                    </span>
+                  </td>
+                  <td class="text-end fw-bold text-dark">
+                    {{ account.balance | currency:'INR':'symbol' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

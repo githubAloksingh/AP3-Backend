@@ -11,6 +11,7 @@ import com.banking.exception.InvalidCredentialsException;
 import com.banking.exception.ResourceNotFoundException;
 import com.banking.repository.CustomerRepository;
 import com.banking.repository.UserRepository;
+import com.banking.security.AuthTokenService;
 import com.banking.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
+    private final AuthTokenService authTokenService;
 
     @Override
     @Transactional
@@ -88,6 +90,7 @@ public class UserServiceImpl implements UserService {
         response.setCustomerId(customer.getId());
         response.setFullName(user.getFullName());
         response.setEmail(user.getEmail());
+        response.setToken(authTokenService.createToken(user.getId(), customer.getId(), user.getEmail()));
         response.setMessage("Login successful");
 
         return response;
