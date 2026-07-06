@@ -36,6 +36,8 @@ public class CustomerController {
      * GET /api/customers/{id}
      * Retrieves a customer by their ID.
      *
+     * 
+     * 
      * @param id the customer ID
      * @return the customer with HTTP 200 (OK)
      */
