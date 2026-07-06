@@ -30,8 +30,4 @@ public interface CustomerService {
      */
     CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO);
 
-    /**
-     * Delete a customer by their ID.
-     */
-    void deleteCustomer(Long id);
 }

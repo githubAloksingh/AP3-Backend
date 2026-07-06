@@ -73,38 +73,6 @@ public class AccountServiceImpl implements AccountService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    @Transactional
-    public AccountDTO updateAccount(Long id, AccountDTO accountDTO) {
-
-        // Find existing account
-        Account existingAccount = accountRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
-
-        // Update account type if provided
-        if (accountDTO.getAccountType() != null) {
-            existingAccount.setAccountType(Account.AccountType.valueOf(accountDTO.getAccountType().toUpperCase()));
-        }
-
-        // Update balance if provided
-        if (accountDTO.getBalance() != null) {
-            existingAccount.setBalance(accountDTO.getBalance());
-        }
-
-        // Save updated account
-        Account updatedAccount = accountRepository.save(existingAccount);
-
-        return mapToDTO(updatedAccount);
-    }
-
-    @Override
-    @Transactional
-    public void deleteAccount(Long id) {
-        Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
-        accountRepository.delete(account);
-    }
-
     /**
      * Generates a unique 10-digit account number.
      */

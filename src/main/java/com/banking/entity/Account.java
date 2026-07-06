@@ -10,8 +10,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents a bank account belonging to a customer.
@@ -56,12 +54,6 @@ public class Account {
     @JoinColumn(name = "customer_id", nullable = false)
     @JsonIgnore
     private Customer customer;
-
-    /**
-     * All transactions performed on this account.
-     */
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Transaction> transactions = new ArrayList<>();
 
     /**
      * Sets the created timestamp before the entity is first persisted.

@@ -55,23 +55,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles InsufficientBalanceException.
-     * Returns HTTP 400 (Bad Request).
-     */
-    @ExceptionHandler(InsufficientBalanceException.class)
-    public ResponseEntity<ErrorResponse> handleInsufficientBalanceException(
-            InsufficientBalanceException ex, WebRequest request) {
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-    }
-
-    /**
      * Handles InvalidCredentialsException.
      * Returns HTTP 401 (Unauthorized).
      */

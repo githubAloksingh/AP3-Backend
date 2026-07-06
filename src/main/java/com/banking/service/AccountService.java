@@ -30,13 +30,4 @@ public interface AccountService {
      */
     List<AccountDTO> getAccountsByCustomerId(Long customerId);
 
-    /**
-     * Update an existing account.
-     */
-    AccountDTO updateAccount(Long id, AccountDTO accountDTO);
-
-    /**
-     * Delete an account by its ID.
-     */
-    void deleteAccount(Long id);
 }
