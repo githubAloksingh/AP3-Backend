@@ -4,7 +4,6 @@ import com.banking.dto.CustomerDTO;
 import com.banking.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,19 +19,6 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
-
-    /**
-     * POST /api/customers
-     * Creates a new customer.
-     *
-     * @param customerDTO the customer data
-     * @return the created customer with HTTP 201 (Created)
-     */
-    @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
-        CustomerDTO createdCustomer = customerService.createCustomer(customerDTO);
-        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
-    }
 
     /**
      * GET /api/customers
@@ -75,16 +61,4 @@ public class CustomerController {
         return ResponseEntity.ok(updatedCustomer);
     }
 
-    /**
-     * DELETE /api/customers/{id}
-     * Deletes a customer by their ID.
-     *
-     * @param id the customer ID
-     * @return HTTP 204 (No Content)
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
-        customerService.deleteCustomer(id);
-        return ResponseEntity.noContent().build();
-    }
 }

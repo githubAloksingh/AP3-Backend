@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +34,9 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         // Check if phone number already exists
-        if (customerRepository.existsByPhoneNumber(customerDTO.getPhoneNumber())) {
+        if (customerDTO.getPhoneNumber() != null
+                && !customerDTO.getPhoneNumber().isBlank()
+                && customerRepository.existsByPhoneNumber(customerDTO.getPhoneNumber())) {
             throw new DuplicateResourceException("Phone number '" + customerDTO.getPhoneNumber() + "' is already registered");
         }
 
@@ -77,7 +80,9 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         // Check if the new phone number is already taken by another customer
-        if (!existingCustomer.getPhoneNumber().equals(customerDTO.getPhoneNumber())
+        if (customerDTO.getPhoneNumber() != null
+                && !customerDTO.getPhoneNumber().isBlank()
+                && !Objects.equals(existingCustomer.getPhoneNumber(), customerDTO.getPhoneNumber())
                 && customerRepository.existsByPhoneNumber(customerDTO.getPhoneNumber())) {
             throw new DuplicateResourceException("Phone number '" + customerDTO.getPhoneNumber() + "' is already registered");
         }

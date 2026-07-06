@@ -41,13 +41,11 @@ public class Customer {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits")
-    @Column(name = "phone_number", nullable = false, unique = true)
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
-    @NotBlank(message = "Address is required")
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
     /**

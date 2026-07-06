@@ -3,6 +3,7 @@ package com.banking.service;
 import com.banking.dto.LoginRequest;
 import com.banking.dto.LoginResponse;
 import com.banking.dto.SignupRequest;
+import com.banking.dto.SignupResponse;
 
 /**
  * Service interface for User authentication operations.
@@ -15,9 +16,9 @@ public interface UserService {
      * Checks if the email already exists before creating the user.
      *
      * @param signupRequest the signup details
-     * @return a success message
+     * @return signup result with the created customer profile ID
      */
-    String signup(SignupRequest signupRequest);
+    SignupResponse signup(SignupRequest signupRequest);
 
     /**
      * Authenticate a user with email and password.

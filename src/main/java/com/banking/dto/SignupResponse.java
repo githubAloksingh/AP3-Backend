@@ -15,5 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SignupResponse {
 
+    private Long customerId;
+
     private String message;
 }

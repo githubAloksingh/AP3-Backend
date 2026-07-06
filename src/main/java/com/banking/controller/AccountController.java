@@ -67,32 +67,4 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
-    /**
-     * PUT /api/accounts/{id}
-     * Updates an existing account.
-     *
-     * @param id the account ID
-     * @param accountDTO the updated account data
-     * @return the updated account with HTTP 200 (OK)
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<AccountDTO> updateAccount(
-            @PathVariable Long id,
-            @Valid @RequestBody AccountDTO accountDTO) {
-        AccountDTO updatedAccount = accountService.updateAccount(id, accountDTO);
-        return ResponseEntity.ok(updatedAccount);
-    }
-
-    /**
-     * DELETE /api/accounts/{id}
-     * Deletes an account by its ID.
-     *
-     * @param id the account ID
-     * @return HTTP 204 (No Content)
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
-        accountService.deleteAccount(id);
-        return ResponseEntity.noContent().build();
-    }
 }

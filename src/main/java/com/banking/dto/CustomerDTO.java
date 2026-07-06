@@ -30,10 +30,8 @@ public class CustomerDTO {
     @Email(message = "Email should be valid")
     private String email;
 
-    @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be exactly 10 digits")
     private String phoneNumber;
 
-    @NotBlank(message = "Address is required")
     private String address;
 }

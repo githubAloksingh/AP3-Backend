@@ -18,6 +18,8 @@ public class LoginResponse {
 
     private Long id;
 
+    private Long customerId;
+
     private String fullName;
 
     private String email;

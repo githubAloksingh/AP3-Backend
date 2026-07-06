@@ -3,9 +3,13 @@ package com.banking.service.impl;
 import com.banking.dto.LoginRequest;
 import com.banking.dto.LoginResponse;
 import com.banking.dto.SignupRequest;
+import com.banking.dto.SignupResponse;
+import com.banking.entity.Customer;
 import com.banking.entity.User;
 import com.banking.exception.DuplicateResourceException;
 import com.banking.exception.InvalidCredentialsException;
+import com.banking.exception.ResourceNotFoundException;
+import com.banking.repository.CustomerRepository;
 import com.banking.repository.UserRepository;
 import com.banking.service.UserService;
 import lombok.AllArgsConstructor;
@@ -21,15 +25,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     @Transactional
-    public String signup(SignupRequest signupRequest) {
+    public SignupResponse signup(SignupRequest signupRequest) {
 
         // Check if the email is already registered
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             throw new DuplicateResourceException(
                     "Email '" + signupRequest.getEmail() + "' is already registered"
+            );
+        }
+
+        if (customerRepository.existsByEmail(signupRequest.getEmail())) {
+            throw new DuplicateResourceException(
+                    "Customer profile with email '" + signupRequest.getEmail() + "' already exists"
             );
         }
 
@@ -39,10 +50,21 @@ public class UserServiceImpl implements UserService {
         user.setEmail(signupRequest.getEmail());
         user.setPassword(signupRequest.getPassword());
 
-        // Save the user to the database
-        userRepository.save(user);
+        Customer customer = new Customer();
+        String fullName = signupRequest.getFullName().trim();
+        String[] nameParts = fullName.split("\\s+", 2);
+        customer.setFirstName(nameParts[0]);
+        customer.setLastName(nameParts.length > 1 ? nameParts[1] : nameParts[0]);
+        customer.setEmail(signupRequest.getEmail());
 
-        return "User registered successfully";
+        // Save the user and initial customer profile to the database
+        userRepository.save(user);
+        Customer savedCustomer = customerRepository.save(customer);
+
+        return new SignupResponse(
+                savedCustomer.getId(),
+                "User registered successfully and customer profile created"
+        );
     }
 
     @Override
@@ -58,8 +80,12 @@ public class UserServiceImpl implements UserService {
         }
 
         // Return user details without the password
+        Customer customer = customerRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer profile not found for email: " + user.getEmail()));
+
         LoginResponse response = new LoginResponse();
         response.setId(user.getId());
+        response.setCustomerId(customer.getId());
         response.setFullName(user.getFullName());
         response.setEmail(user.getEmail());
         response.setMessage("Login successful");
