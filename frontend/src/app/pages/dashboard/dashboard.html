@@ -4,12 +4,11 @@
       <div class="p-4 bg-light rounded-4 shadow-sm d-flex justify-content-between align-items-center flex-wrap">
         <div>
           <h1 class="h3 mb-1 fw-bold text-dark">Welcome back, {{ authService.getFullName() }}!</h1>
-          <p class="text-muted mb-0">Here is a quick overview of your banking dashboard.</p>
+          <p class="text-muted mb-0">Manage accounts, transfer money, and review payment history.</p>
         </div>
-        <div class="mt-2 mt-md-0">
-          <a routerLink="/accounts/create" class="btn btn-primary d-flex align-items-center">
-            <span class="fs-5 me-2">+</span> Open New Account
-          </a>
+        <div class="mt-2 mt-md-0 d-flex gap-2 flex-wrap">
+          <a routerLink="/transfer" class="btn btn-success">Transfer Money</a>
+          <a routerLink="/accounts/create" class="btn btn-primary">Open New Account</a>
         </div>
       </div>
     </div>
@@ -26,7 +25,6 @@
   </div>
 
   <div *ngIf="!loading() && !errorMessage()" class="row">
-    <!-- Balance & Account count summary cards -->
     <div class="col-md-6 mb-4">
       <div class="card border-0 shadow-sm rounded-4 bg-primary text-white h-100 p-3">
         <div class="card-body">
@@ -47,7 +45,22 @@
       </div>
     </div>
 
-    <!-- Accounts list -->
+    <div class="col-md-4 mb-4">
+      <a routerLink="/profile" class="card border-0 shadow-sm rounded-4 text-decoration-none text-reset h-100">
+        <div class="card-body p-4"><h5 class="fw-bold">Profile</h5><p class="text-muted mb-0">Update customer and region details.</p></div>
+      </a>
+    </div>
+    <div class="col-md-4 mb-4">
+      <a routerLink="/transfer" class="card border-0 shadow-sm rounded-4 text-decoration-none text-reset h-100">
+        <div class="card-body p-4"><h5 class="fw-bold">Transfer</h5><p class="text-muted mb-0">Send money with region validation.</p></div>
+      </a>
+    </div>
+    <div class="col-md-4 mb-4">
+      <a routerLink="/transactions" class="card border-0 shadow-sm rounded-4 text-decoration-none text-reset h-100">
+        <div class="card-body p-4"><h5 class="fw-bold">Transactions</h5><p class="text-muted mb-0">View payment history and details.</p></div>
+      </a>
+    </div>
+
     <div class="col-12 mt-2">
       <div class="card border-0 shadow-sm rounded-4">
         <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
@@ -62,25 +75,13 @@
           <div *ngIf="accounts().length > 0" class="table-responsive">
             <table class="table align-middle table-hover">
               <thead class="table-light">
-                <tr>
-                  <th scope="col" class="border-0">Account Number</th>
-                  <th scope="col" class="border-0">Type</th>
-                  <th scope="col" class="border-0 text-end">Balance</th>
-                </tr>
+                <tr><th class="border-0">Account Number</th><th class="border-0">Type</th><th class="border-0 text-end">Balance</th></tr>
               </thead>
               <tbody>
                 <tr *ngFor="let account of accounts()">
-                  <td>
-                    <span class="font-monospace fw-bold text-dark">{{ account.accountNumber }}</span>
-                  </td>
-                  <td>
-                    <span class="badge rounded-pill" [ngClass]="account.accountType === 'SAVINGS' ? 'bg-info-subtle text-info-emphasis' : 'bg-warning-subtle text-warning-emphasis'">
-                      {{ account.accountType }}
-                    </span>
-                  </td>
-                  <td class="text-end fw-bold text-dark">
-                    {{ account.balance | currency:'INR':'symbol' }}
-                  </td>
+                  <td><span class="font-monospace fw-bold text-dark">{{ account.accountNumber }}</span></td>
+                  <td><span class="badge rounded-pill" [ngClass]="account.accountType === 'SAVINGS' ? 'bg-info-subtle text-info-emphasis' : 'bg-warning-subtle text-warning-emphasis'">{{ account.accountType }}</span></td>
+                  <td class="text-end fw-bold text-dark">{{ account.balance | currency:'INR':'symbol' }}</td>
                 </tr>
               </tbody>
             </table>

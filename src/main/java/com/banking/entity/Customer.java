@@ -48,6 +48,9 @@ public class Customer {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "country")
+    private String country = "INDIA";
+
     /**
      * A customer can have multiple bank accounts.
      * Cascade all operations and orphan removal ensures
@@ -57,3 +60,5 @@ public class Customer {
     private List<Account> accounts = new ArrayList<>();
 
 }
+
+

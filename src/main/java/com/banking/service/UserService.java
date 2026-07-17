@@ -4,6 +4,7 @@ import com.banking.dto.LoginRequest;
 import com.banking.dto.LoginResponse;
 import com.banking.dto.SignupRequest;
 import com.banking.dto.SignupResponse;
+import com.banking.dto.ResetPasswordRequest;
 
 /**
  * Service interface for User authentication operations.
@@ -28,4 +29,6 @@ public interface UserService {
      * @return user details with a success message
      */
     LoginResponse login(LoginRequest loginRequest);
+
+    void resetPassword(ResetPasswordRequest request);
 }

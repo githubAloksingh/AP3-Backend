@@ -19,7 +19,8 @@ export class ProfileComponent implements OnInit {
     lastName: '',
     email: '',
     phoneNumber: '',
-    address: ''
+    address: '',
+    country: 'INDIA'
   };
 
   loading = signal<boolean>(true);
@@ -38,15 +39,12 @@ export class ProfileComponent implements OnInit {
   }
 
   loadProfile(customerId: number): void {
-    console.log('[ProfileComponent] Loading profile for customerId:', customerId);
     this.customerService.getCustomerById(customerId).subscribe({
       next: (data) => {
-        console.log('[ProfileComponent] Profile loaded successfully:', data);
-        this.customer = data;
+        this.customer = { ...data, country: data.country || 'INDIA' };
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('[ProfileComponent] Profile load error:', err);
         this.loading.set(false);
         this.errorMessage.set(err.error?.message || 'Failed to load customer profile.');
       }
@@ -57,9 +55,18 @@ export class ProfileComponent implements OnInit {
     const customerId = this.authService.getCustomerId();
     if (!customerId) return;
 
-    // Validation (phone number exactly 10 digits if provided)
+    if (!this.customer.firstName?.trim() || !this.customer.lastName?.trim()) {
+      this.errorMessage.set('First name and last name are required.');
+      return;
+    }
+
     if (this.customer.phoneNumber && !/^[0-9]{10}$/.test(this.customer.phoneNumber)) {
       this.errorMessage.set('Phone number must be exactly 10 digits.');
+      return;
+    }
+
+    if (!this.customer.country?.trim()) {
+      this.errorMessage.set('Country is required for region validation.');
       return;
     }
 
@@ -67,7 +74,10 @@ export class ProfileComponent implements OnInit {
     this.successMessage.set('');
     this.saving.set(true);
 
-    this.customerService.updateCustomer(customerId, this.customer).subscribe({
+    this.customerService.updateCustomer(customerId, {
+      ...this.customer,
+      country: this.customer.country.trim().toUpperCase()
+    }).subscribe({
       next: (data) => {
         this.customer = data;
         this.saving.set(false);

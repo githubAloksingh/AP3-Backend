@@ -34,4 +34,8 @@ public class CustomerDTO {
     private String phoneNumber;
 
     private String address;
+
+    @NotBlank(message = "Country is required")
+    private String country = "INDIA";
 }
+

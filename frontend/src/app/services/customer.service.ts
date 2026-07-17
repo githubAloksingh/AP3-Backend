@@ -11,6 +11,10 @@ export class CustomerService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/api/customers`;
 
+  getAllCustomers(): Observable<Customer[]> {
+    return this.http.get<Customer[]>(this.apiUrl);
+  }
+
   getCustomerById(id: number): Observable<Customer> {
     return this.http.get<Customer>(`${this.apiUrl}/${id}`);
   }

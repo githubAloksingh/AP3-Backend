@@ -61,6 +61,11 @@ export class AuthService {
     return localStorage.getItem('email') ?? '';
   }
 
+  isAdmin(): boolean {
+    const email = this.getEmail().toLowerCase();
+    return email === 'admin@gmail.com';
+  }
+
   private readSession(): SessionUser | null {
     if (typeof window === 'undefined') {
       return null;
@@ -76,7 +81,8 @@ export class AuthService {
         id: Number(userId),
         customerId: Number(customerId),
         fullName,
-        email
+        email,
+        role: email.toLowerCase() === 'admin@gmail.com' ? 'ADMIN' : 'USER'
       };
     }
     return null;
@@ -95,7 +101,8 @@ export class AuthService {
       id: response.id,
       customerId: response.customerId,
       fullName: response.fullName,
-      email: response.email
+      email: response.email,
+      role: response.email.toLowerCase() === 'admin@gmail.com' ? 'ADMIN' : 'USER'
     });
   }
 

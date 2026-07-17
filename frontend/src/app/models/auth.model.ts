@@ -28,4 +28,5 @@ export interface SessionUser {
   customerId: number;
   fullName: string;
   email: string;
+  role?: 'ADMIN' | 'USER';
 }

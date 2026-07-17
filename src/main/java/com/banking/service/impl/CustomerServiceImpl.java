@@ -93,6 +93,7 @@ public class CustomerServiceImpl implements CustomerService {
         existingCustomer.setEmail(customerDTO.getEmail());
         existingCustomer.setPhoneNumber(customerDTO.getPhoneNumber());
         existingCustomer.setAddress(customerDTO.getAddress());
+        existingCustomer.setCountry(normalizeCountry(customerDTO.getCountry()));
 
         // Save updated customer
         Customer updatedCustomer = customerRepository.save(existingCustomer);
@@ -111,6 +112,7 @@ public class CustomerServiceImpl implements CustomerService {
         dto.setEmail(customer.getEmail());
         dto.setPhoneNumber(customer.getPhoneNumber());
         dto.setAddress(customer.getAddress());
+        dto.setCountry(customer.getCountry());
         return dto;
     }
 
@@ -124,6 +126,12 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setEmail(dto.getEmail());
         customer.setPhoneNumber(dto.getPhoneNumber());
         customer.setAddress(dto.getAddress());
+        customer.setCountry(normalizeCountry(dto.getCountry()));
         return customer;
     }
+
+    private String normalizeCountry(String country) {
+        return country == null || country.isBlank() ? "INDIA" : country.trim().toUpperCase();
+    }
 }
+

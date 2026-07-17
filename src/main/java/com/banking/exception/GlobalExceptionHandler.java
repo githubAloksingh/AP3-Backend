@@ -71,6 +71,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+
+    @ExceptionHandler(InvalidTransactionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTransactionException(
+            InvalidTransactionException ex, WebRequest request) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
     /**
      * Handles validation errors from @Valid annotations.
      * Returns HTTP 400 (Bad Request) with field-specific error messages.
@@ -134,3 +147,4 @@ public class GlobalExceptionHandler {
         }
     }
 }
+

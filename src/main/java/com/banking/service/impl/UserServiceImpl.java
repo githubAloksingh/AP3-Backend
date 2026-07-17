@@ -4,6 +4,7 @@ import com.banking.dto.LoginRequest;
 import com.banking.dto.LoginResponse;
 import com.banking.dto.SignupRequest;
 import com.banking.dto.SignupResponse;
+import com.banking.dto.ResetPasswordRequest;
 import com.banking.entity.Customer;
 import com.banking.entity.User;
 import com.banking.exception.DuplicateResourceException;
@@ -58,6 +59,7 @@ public class UserServiceImpl implements UserService {
         customer.setFirstName(nameParts[0]);
         customer.setLastName(nameParts.length > 1 ? nameParts[1] : nameParts[0]);
         customer.setEmail(signupRequest.getEmail());
+        customer.setCountry("INDIA");
 
         // Save the user and initial customer profile to the database
         userRepository.save(user);
@@ -95,4 +97,19 @@ public class UserServiceImpl implements UserService {
 
         return response;
     }
+
+    @Override
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + request.getEmail()));
+
+        if (!user.getPassword().equals(request.getCurrentPassword())) {
+            throw new InvalidCredentialsException("Current password is incorrect");
+        }
+
+        user.setPassword(request.getNewPassword());
+        userRepository.save(user);
+    }
 }
+

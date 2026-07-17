@@ -1,0 +1,26 @@
+<div class="container my-4">
+  <a routerLink="/transactions" class="btn btn-outline-secondary btn-sm mb-3">Back to Transactions</a>
+
+  <div *ngIf="errorMessage()" class="alert alert-danger">{{ errorMessage() }}</div>
+  <div *ngIf="loading()" class="text-center my-5"><div class="spinner-border text-primary"></div></div>
+
+  <div *ngIf="!loading() && transaction() as txn" class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4 p-md-5">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div>
+          <h2 class="fw-bold mb-1">Transaction #{{ txn.id }}</h2>
+          <p class="text-muted mb-0">{{ txn.createdAt | date:'medium' }}</p>
+        </div>
+        <span class="badge bg-success-subtle text-success-emphasis fs-6">{{ txn.status }}</span>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6"><strong>Sender:</strong><br>{{ txn.senderName }}<br><span class="text-muted">{{ txn.fromAccountNumber }} | {{ txn.senderCountry }}</span></div>
+        <div class="col-md-6"><strong>Receiver:</strong><br>{{ txn.receiverName }}<br><span class="text-muted">{{ txn.toAccountNumber }} | {{ txn.receiverCountry }}</span></div>
+        <div class="col-md-6"><strong>Amount:</strong><br>{{ txn.amount | currency:'INR':'symbol' }}</div>
+        <div class="col-md-6"><strong>Type:</strong><br>{{ txn.transactionType }}</div>
+        <div class="col-12" *ngIf="txn.description"><strong>Description:</strong><br>{{ txn.description }}</div>
+      </div>
+    </div>
+  </div>
+</div>

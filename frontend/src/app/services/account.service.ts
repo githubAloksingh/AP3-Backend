@@ -16,6 +16,10 @@ export class AccountService {
     return this.http.get<Account[]>(this.apiUrl, { params });
   }
 
+  getAllAccounts(): Observable<Account[]> {
+    return this.http.get<Account[]>(this.apiUrl);
+  }
+
   createAccount(account: Account): Observable<Account> {
     return this.http.post<Account>(this.apiUrl, account);
   }

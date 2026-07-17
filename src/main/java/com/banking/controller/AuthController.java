@@ -4,6 +4,7 @@ import com.banking.dto.LoginRequest;
 import com.banking.dto.LoginResponse;
 import com.banking.dto.SignupRequest;
 import com.banking.dto.SignupResponse;
+import com.banking.dto.ResetPasswordRequest;
 import com.banking.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -46,5 +47,11 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         LoginResponse response = userService.login(loginRequest);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request);
+        return ResponseEntity.ok("Password updated successfully");
     }
 }
