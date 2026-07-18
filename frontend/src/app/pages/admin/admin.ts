@@ -2,10 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { Account } from '../../models/account.model';
 import { Customer } from '../../models/customer.model';
-import { Transaction } from '../../models/transaction.model';
 import { AccountService } from '../../services/account.service';
 import { CustomerService } from '../../services/customer.service';
-import { TransactionService } from '../../services/transaction.service';
 
 @Component({
   selector: 'app-admin',
@@ -16,11 +14,8 @@ import { TransactionService } from '../../services/transaction.service';
 export class AdminComponent implements OnInit {
   private readonly customerService = inject(CustomerService);
   private readonly accountService = inject(AccountService);
-  private readonly transactionService = inject(TransactionService);
-
   customers = signal<Customer[]>([]);
   accounts = signal<Account[]>([]);
-  transactions = signal<Transaction[]>([]);
   loading = signal<boolean>(true);
   errorMessage = signal<string>('');
 
@@ -44,9 +39,8 @@ export class AdminComponent implements OnInit {
     let completed = 0;
     const done = () => {
       completed += 1;
-      if (completed === 3) this.loading.set(false);
+      if (completed === 2) this.loading.set(false);
     };
-
     this.customerService.getAllCustomers().subscribe({
       next: (data) => {
         this.customers.set(data);
@@ -69,16 +63,7 @@ export class AdminComponent implements OnInit {
       }
     });
 
-    this.transactionService.getTransactions().subscribe({
-      next: (data) => {
-        this.transactions.set(data);
-        done();
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Failed to load transactions.');
-        done();
-      }
-    });
+    // transactions removed
   }
 
   selectCustomer(customer: Customer): void {

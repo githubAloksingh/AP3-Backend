@@ -51,6 +51,9 @@ public class Customer {
     @Column(name = "country")
     private String country = "INDIA";
 
+    @NotBlank(message = "Password is required")
+    @Column(name = "password", nullable = false)
+    private String password;
     /**
      * A customer can have multiple bank accounts.
      * Cascade all operations and orphan removal ensures

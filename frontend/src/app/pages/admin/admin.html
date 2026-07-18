@@ -6,7 +6,6 @@
   <div *ngIf="!loading()" class="row g-4">
     <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4"><div class="card-body"><h6 class="text-muted">Customers</h6><h2 class="fw-bold">{{ customers().length }}</h2></div></div></div>
     <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4"><div class="card-body"><h6 class="text-muted">Accounts</h6><h2 class="fw-bold">{{ accounts().length }}</h2></div></div></div>
-    <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4"><div class="card-body"><h6 class="text-muted">Transactions</h6><h2 class="fw-bold">{{ transactions().length }}</h2></div></div></div>
 
     <div class="col-lg-5">
       <div class="card border-0 shadow-sm rounded-4">
@@ -73,21 +72,7 @@
       </div>
     </div>
 
-    <div class="col-12">
-      <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-header bg-white border-0 pt-4 px-4"><h5 class="fw-bold">Recent Transactions</h5></div>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light"><tr><th>ID</th><th>Sender</th><th>Receiver</th><th>Region</th><th class="text-end">Amount</th></tr></thead>
-            <tbody>
-              <tr *ngFor="let txn of transactions().slice(0, 8)">
-                <td>#{{ txn.id }}</td><td>{{ txn.senderName }}</td><td>{{ txn.receiverName }}</td><td>{{ txn.senderCountry }} -> {{ txn.receiverCountry }}</td><td class="text-end fw-bold">{{ txn.amount | currency:'INR':'symbol' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <!-- Transactions removed -->
   </div>
 </div>
 

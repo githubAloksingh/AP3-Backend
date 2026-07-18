@@ -4,7 +4,7 @@ import com.banking.entity.Account;
 import com.banking.entity.Customer;
 import com.banking.repository.AccountRepository;
 import com.banking.repository.CustomerRepository;
-import com.banking.repository.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,9 +22,6 @@ import static org.mockito.Mockito.when;
 class AdminUserSeederTest {
 
     @Mock
-    private UserRepository userRepository;
-
-    @Mock
     private CustomerRepository customerRepository;
 
     @Mock
@@ -35,7 +32,7 @@ class AdminUserSeederTest {
 
     @Test
     void shouldCreateDemoAccountForAdminCustomerWhenMissing() {
-        when(userRepository.existsByEmail("admin@gmail.com")).thenReturn(false);
+        when(customerRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.empty());
 
         Customer savedCustomer = new Customer();
         savedCustomer.setEmail("admin@gmail.com");
