@@ -40,6 +40,55 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         request.setAttribute(AUTHENTICATED_USER_ATTRIBUTE, authenticatedUser);
+
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
+        String role = authenticatedUser.role();
+
+        if (uri.startsWith("/api/customers")) {
+            if (uri.equals("/api/customers") || uri.equals("/api/customers/")) {
+                if ("GET".equalsIgnoreCase(method) && !"ROLE_ADMIN".equals(role)) {
+                    response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied");
+                    return false;
+                }
+            } else {
+                String suffix = uri.substring("/api/customers/".length()).split("/")[0];
+                try {
+                    Long targetCustomerId = Long.parseLong(suffix);
+                    if (!"ROLE_ADMIN".equals(role) && !targetCustomerId.equals(authenticatedUser.customerId())) {
+                        response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied");
+                        return false;
+                    }
+                } catch (NumberFormatException e) {
+                    // Let controller handle path variables formatting
+                }
+            }
+        }
+
+        if (uri.startsWith("/api/accounts")) {
+            if (uri.equals("/api/accounts") || uri.equals("/api/accounts/")) {
+                if ("GET".equalsIgnoreCase(method)) {
+                    String customerIdParam = request.getParameter("customerId");
+                    if (customerIdParam == null) {
+                        if (!"ROLE_ADMIN".equals(role)) {
+                            response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied");
+                            return false;
+                        }
+                    } else {
+                        try {
+                            Long targetCustomerId = Long.parseLong(customerIdParam);
+                            if (!"ROLE_ADMIN".equals(role) && !targetCustomerId.equals(authenticatedUser.customerId())) {
+                                response.sendError(HttpStatus.FORBIDDEN.value(), "Access denied");
+                                return false;
+                            }
+                        } catch (NumberFormatException e) {
+                            // Let controller handle parameter formatting
+                        }
+                    }
+                }
+            }
+        }
+
         return true;
     }
 }

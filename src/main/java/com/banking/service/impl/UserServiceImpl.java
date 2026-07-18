@@ -6,6 +6,7 @@ import com.banking.dto.SignupRequest;
 import com.banking.dto.SignupResponse;
 import com.banking.dto.ResetPasswordRequest;
 import com.banking.entity.Customer;
+import com.banking.entity.Role;
 import com.banking.exception.DuplicateResourceException;
 import com.banking.exception.InvalidCredentialsException;
 import com.banking.exception.ResourceNotFoundException;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
         customer.setEmail(signupRequest.getEmail());
         customer.setCountry("INDIA");
         customer.setPassword(signupRequest.getPassword());
+        customer.setRole(Role.ROLE_CUSTOMER);
 
         Customer savedCustomer = customerRepository.save(customer);
 
@@ -69,7 +71,8 @@ public class UserServiceImpl implements UserService {
         response.setCustomerId(customer.getId());
         response.setFullName(customer.getFirstName() + " " + customer.getLastName());
         response.setEmail(customer.getEmail());
-        response.setToken(authTokenService.createToken(customer.getId(), customer.getId(), customer.getEmail()));
+        response.setToken(authTokenService.createToken(customer.getId(), customer.getId(), customer.getEmail(), customer.getRole().name()));
+        response.setRole(customer.getRole().name());
         response.setMessage("Login successful");
 
         return response;

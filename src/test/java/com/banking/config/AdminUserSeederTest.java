@@ -1,8 +1,7 @@
 package com.banking.config;
 
-import com.banking.entity.Account;
 import com.banking.entity.Customer;
-import com.banking.repository.AccountRepository;
+import com.banking.entity.Role;
 import com.banking.repository.CustomerRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -24,26 +23,25 @@ class AdminUserSeederTest {
     @Mock
     private CustomerRepository customerRepository;
 
-    @Mock
-    private AccountRepository accountRepository;
-
     @InjectMocks
     private AdminUserSeeder adminUserSeeder;
 
     @Test
-    void shouldCreateDemoAccountForAdminCustomerWhenMissing() {
+    void shouldCreateAdminCustomerWhenMissing() {
         when(customerRepository.findByEmail("admin@gmail.com")).thenReturn(Optional.empty());
+        when(customerRepository.findByEmail("admin@bank.com")).thenReturn(Optional.empty());
 
         Customer savedCustomer = new Customer();
-        savedCustomer.setEmail("admin@gmail.com");
-        savedCustomer.setPhoneNumber("9999999999");
+        savedCustomer.setEmail("admin@bank.com");
+        savedCustomer.setPassword("Admin@123");
+        savedCustomer.setRole(Role.ROLE_ADMIN);
         when(customerRepository.save(any(Customer.class))).thenReturn(savedCustomer);
-        when(accountRepository.save(any(Account.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         adminUserSeeder.run(new DefaultApplicationArguments(new String[0]));
 
-        ArgumentCaptor<Account> accountCaptor = ArgumentCaptor.forClass(Account.class);
-        verify(accountRepository, org.mockito.Mockito.atLeast(2)).save(accountCaptor.capture());
-        assertEquals("ACC-DEMO-001", accountCaptor.getAllValues().get(0).getAccountNumber());
+        ArgumentCaptor<Customer> customerCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).save(customerCaptor.capture());
+        assertEquals("admin@bank.com", customerCaptor.getValue().getEmail());
+        assertEquals(Role.ROLE_ADMIN, customerCaptor.getValue().getRole());
     }
 }

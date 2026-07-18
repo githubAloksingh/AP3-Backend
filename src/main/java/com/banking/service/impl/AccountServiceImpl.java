@@ -10,6 +10,7 @@ import com.banking.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.banking.security.AuthTokenService.AuthenticatedUser;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,11 +31,16 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public AccountDTO createAccount(AccountDTO accountDTO) {
+    public AccountDTO createAccount(AccountDTO accountDTO, AuthenticatedUser user) {
 
         // Find the customer
         Customer customer = customerRepository.findById(accountDTO.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id: " + accountDTO.getCustomerId()));
+
+        // Verify ownership: Admin or the owner customer
+        if (!"ROLE_ADMIN".equals(user.role()) && !customer.getId().equals(user.customerId())) {
+            throw new RuntimeException("Access denied: You cannot create an account for another customer");
+        }
 
         // Create a new account
         Account account = new Account();
@@ -42,6 +48,7 @@ public class AccountServiceImpl implements AccountService {
         account.setAccountType(Account.AccountType.valueOf(accountDTO.getAccountType().toUpperCase()));
         account.setBalance(accountDTO.getBalance() != null ? accountDTO.getBalance() : BigDecimal.ZERO);
         account.setCustomer(customer);
+        account.setCustomerName(customer.getFirstName() + " " + customer.getLastName());
         account.setCreatedAt(LocalDateTime.now());
 
         // Save the account
@@ -51,9 +58,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDTO getAccountById(Long id) {
+    public AccountDTO getAccountById(Long id, AuthenticatedUser user) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+
+        // Verify ownership: Admin or the owner customer
+        if (!"ROLE_ADMIN".equals(user.role()) && !account.getCustomer().getId().equals(user.customerId())) {
+            throw new ResourceNotFoundException("Account not found with id: " + id);
+        }
+
         return mapToDTO(account);
     }
 
@@ -87,6 +100,20 @@ public class AccountServiceImpl implements AccountService {
         } while (accountRepository.existsByAccountNumber(accountNumber.toString()));
 
         return accountNumber.toString();
+    }
+
+    @Override
+    @Transactional
+    public void deleteAccount(Long id, AuthenticatedUser user) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+
+        // Verify ownership: Admin or the owner customer
+        if (!"ROLE_ADMIN".equals(user.role()) && !account.getCustomer().getId().equals(user.customerId())) {
+            throw new ResourceNotFoundException("Account not found with id: " + id);
+        }
+
+        accountRepository.delete(account);
     }
 
     /**

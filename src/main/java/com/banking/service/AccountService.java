@@ -4,6 +4,8 @@ import com.banking.dto.AccountDTO;
 
 import java.util.List;
 
+import com.banking.security.AuthTokenService.AuthenticatedUser;
+
 /**
  * Service interface for Account operations.
  * Defines the contract for account-related business logic.
@@ -13,12 +15,12 @@ public interface AccountService {
     /**
      * Create a new account for a customer.
      */
-    AccountDTO createAccount(AccountDTO accountDTO);
+    AccountDTO createAccount(AccountDTO accountDTO, AuthenticatedUser user);
 
     /**
      * Get an account by its ID.
      */
-    AccountDTO getAccountById(Long id);
+    AccountDTO getAccountById(Long id, AuthenticatedUser user);
 
     /**
      * Get all accounts.
@@ -30,4 +32,8 @@ public interface AccountService {
      */
     List<AccountDTO> getAccountsByCustomerId(Long customerId);
 
+    /**
+     * Close (delete) an account by its ID.
+     */
+    void deleteAccount(Long id, AuthenticatedUser user);
 }

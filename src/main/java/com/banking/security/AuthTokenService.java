@@ -12,9 +12,9 @@ public class AuthTokenService {
 
     private final Map<String, AuthenticatedUser> tokens = new ConcurrentHashMap<>();
 
-    public String createToken(Long userId, Long customerId, String email) {
+    public String createToken(Long userId, Long customerId, String email, String role) {
         String token = UUID.randomUUID().toString();
-        tokens.put(token, new AuthenticatedUser(userId, customerId, email));
+        tokens.put(token, new AuthenticatedUser(userId, customerId, email, role));
         return token;
     }
 
@@ -22,6 +22,6 @@ public class AuthTokenService {
         return Optional.ofNullable(tokens.get(token));
     }
 
-    public record AuthenticatedUser(Long userId, Long customerId, String email) {
+    public record AuthenticatedUser(Long userId, Long customerId, String email, String role) {
     }
 }

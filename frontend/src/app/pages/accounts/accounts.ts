@@ -43,4 +43,23 @@ export class AccountsListComponent implements OnInit {
       }
     });
   }
+
+  closeAccount(accountId: number | undefined): void {
+    if (!accountId) return;
+    if (confirm('Are you sure you want to close this account? All remaining funds will be deleted, and this action cannot be undone.')) {
+      this.accountService.deleteAccount(accountId).subscribe({
+        next: () => {
+          console.log('[AccountsListComponent] Account closed successfully:', accountId);
+          const customerId = this.authService.getCustomerId();
+          if (customerId) {
+            this.loadAccounts(customerId);
+          }
+        },
+        error: (err) => {
+          console.error('[AccountsListComponent] Account close error:', err);
+          this.errorMessage.set(err.error?.message || 'Failed to close account.');
+        }
+      });
+    }
+  }
 }

@@ -46,6 +46,10 @@ public class Account {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "customer_name")
+    private String customerName;
+
+
     /**
      * The customer who owns this account.
      * JsonIgnore prevents infinite recursion when serializing JSON.

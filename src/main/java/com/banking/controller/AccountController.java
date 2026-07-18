@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.banking.security.CurrentUser;
+import com.banking.security.AuthTokenService.AuthenticatedUser;
 
 import java.util.List;
 
@@ -29,8 +31,10 @@ public class AccountController {
      * @return the created account with HTTP 201 (Created)
      */
     @PostMapping
-    public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountDTO accountDTO) {
-        AccountDTO createdAccount = accountService.createAccount(accountDTO);
+    public ResponseEntity<AccountDTO> createAccount(
+            @Valid @RequestBody AccountDTO accountDTO,
+            @CurrentUser AuthenticatedUser user) {
+        AccountDTO createdAccount = accountService.createAccount(accountDTO, user);
         return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
@@ -62,9 +66,22 @@ public class AccountController {
      * @return the account with HTTP 200 (OK)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<AccountDTO> getAccountById(@PathVariable Long id) {
-        AccountDTO account = accountService.getAccountById(id);
+    public ResponseEntity<AccountDTO> getAccountById(
+            @PathVariable Long id,
+            @CurrentUser AuthenticatedUser user) {
+        AccountDTO account = accountService.getAccountById(id, user);
         return ResponseEntity.ok(account);
     }
 
+    /**
+     * DELETE /api/accounts/{id}
+     * Closes/deletes an account by its ID.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccount(
+            @PathVariable Long id,
+            @CurrentUser AuthenticatedUser user) {
+        accountService.deleteAccount(id, user);
+        return ResponseEntity.noContent().build();
+    }
 }

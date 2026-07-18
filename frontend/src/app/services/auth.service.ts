@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginRequest, LoginResponse, SessionUser, SignupRequest, SignupResponse } from '../models/auth.model';
 
-const STORAGE_KEYS = ['token', 'customerId', 'userId', 'fullName', 'email'] as const;
+const STORAGE_KEYS = ['token', 'customerId', 'userId', 'fullName', 'email', 'role'] as const;
 
 @Injectable({
   providedIn: 'root'
@@ -62,8 +62,10 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
+    const role = localStorage.getItem('role');
+    if (role === 'ROLE_ADMIN') return true;
     const email = this.getEmail().toLowerCase();
-    return email === 'admin@gmail.com';
+    return email === 'admin@bank.com' || email === 'admin@gmail.com';
   }
 
   private readSession(): SessionUser | null {
@@ -75,6 +77,7 @@ export class AuthService {
     const userId = localStorage.getItem('userId');
     const fullName = localStorage.getItem('fullName');
     const email = localStorage.getItem('email');
+    const role = localStorage.getItem('role');
 
     if (token && customerId && userId && fullName && email) {
       return {
@@ -82,7 +85,7 @@ export class AuthService {
         customerId: Number(customerId),
         fullName,
         email,
-        role: email.toLowerCase() === 'admin@gmail.com' ? 'ADMIN' : 'USER'
+        role: role === 'ROLE_ADMIN' || email.toLowerCase() === 'admin@bank.com' ? 'ADMIN' : 'USER'
       };
     }
     return null;
@@ -96,13 +99,16 @@ export class AuthService {
     localStorage.setItem('userId', String(response.id));
     localStorage.setItem('fullName', response.fullName);
     localStorage.setItem('email', response.email);
+    if (response.role) {
+      localStorage.setItem('role', response.role);
+    }
 
     this.sessionSubject.next({
       id: response.id,
       customerId: response.customerId,
       fullName: response.fullName,
       email: response.email,
-      role: response.email.toLowerCase() === 'admin@gmail.com' ? 'ADMIN' : 'USER'
+      role: response.role === 'ROLE_ADMIN' || response.email.toLowerCase() === 'admin@bank.com' ? 'ADMIN' : 'USER'
     });
   }
 

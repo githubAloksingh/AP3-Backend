@@ -21,6 +21,7 @@ export interface LoginResponse {
   email: string;
   token?: string;
   message: string;
+  role?: string;
 }
 
 export interface SessionUser {

@@ -54,6 +54,10 @@ public class Customer {
     @NotBlank(message = "Password is required")
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, columnDefinition = "varchar(255) default 'ROLE_CUSTOMER'")
+    private Role role = Role.ROLE_CUSTOMER;
     /**
      * A customer can have multiple bank accounts.
      * Cascade all operations and orphan removal ensures
