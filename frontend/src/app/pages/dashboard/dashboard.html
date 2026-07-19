@@ -53,13 +53,27 @@
           <div *ngIf="accounts().length > 0" class="table-responsive">
             <table class="table align-middle table-hover">
               <thead class="table-light">
-                <tr><th class="border-0">Account Number</th><th class="border-0">Type</th><th class="border-0 text-end">Balance</th></tr>
+                <tr>
+                  <th class="border-0">Account Number</th>
+                  <th class="border-0">Account Holder</th>
+                  <th class="border-0">Account Type</th>
+                  <th class="border-0 text-end">Balance</th>
+                </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let account of accounts()">
-                  <td><span class="font-monospace fw-bold text-dark">{{ account.accountNumber }}</span></td>
+                  <td><span class="font-monospace fw-bold text-dark">{{ maskAccountNumber(account.accountNumber) }}</span></td>
+                  <td>{{ account.customerName || authService.getFullName() }}</td>
                   <td><span class="badge rounded-pill" [ngClass]="account.accountType === 'SAVINGS' ? 'bg-info-subtle text-info-emphasis' : 'bg-warning-subtle text-warning-emphasis'">{{ account.accountType }}</span></td>
-                  <td class="text-end fw-bold text-dark">{{ account.balance | currency:'INR':'symbol' }}</td>
+                  <td class="text-end fw-bold text-dark">
+                    <span *ngIf="showBalances()">{{ account.balance | currency:'INR':'symbol' }}</span>
+                    <span *ngIf="!showBalances()" class="visually-hidden">Balance hidden</span>
+                    <button type="button" class="btn btn-sm btn-link text-dark p-0 ms-2" (click)="toggleBalances()"
+                      [attr.aria-label]="showBalances() ? 'Hide balances' : 'Show balances'"
+                      [title]="showBalances() ? 'Hide balances' : 'Show balances'">
+                      {{ showBalances() ? '🙈' : '👁' }}
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>

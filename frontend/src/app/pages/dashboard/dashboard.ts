@@ -16,6 +16,7 @@ export class DashboardComponent implements OnInit {
 
   accounts = signal<Account[]>([]);
   totalBalance = signal<number>(0);
+  showBalances = signal<boolean>(false);
   loading = signal<boolean>(true);
   errorMessage = signal<string>('');
 
@@ -44,5 +45,15 @@ export class DashboardComponent implements OnInit {
         this.errorMessage.set(err.error?.message || 'Failed to load accounts. Please refresh the page.');
       }
     });
+  }
+
+  protected maskAccountNumber(accountNumber?: string): string {
+    if (!accountNumber) return '••••';
+    const visibleDigits = 4;
+    return `${'•'.repeat(Math.max(0, accountNumber.length - visibleDigits))}${accountNumber.slice(-visibleDigits)}`;
+  }
+
+  protected toggleBalances(): void {
+    this.showBalances.update(value => !value);
   }
 }

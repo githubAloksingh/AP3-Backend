@@ -17,6 +17,7 @@ export class AccountsListComponent implements OnInit {
   accounts = signal<Account[]>([]);
   loading = signal<boolean>(true);
   errorMessage = signal<string>('');
+  showBalances = signal<boolean>(false);
 
   ngOnInit(): void {
     const customerId = this.authService.getCustomerId();
@@ -61,5 +62,15 @@ export class AccountsListComponent implements OnInit {
         }
       });
     }
+  }
+
+  protected maskAccountNumber(accountNumber?: string): string {
+    if (!accountNumber) return '••••';
+    const visibleDigits = 4;
+    return `${'•'.repeat(Math.max(0, accountNumber.length - visibleDigits))}${accountNumber.slice(-visibleDigits)}`;
+  }
+
+  protected toggleBalances(): void {
+    this.showBalances.update(value => !value);
   }
 }
