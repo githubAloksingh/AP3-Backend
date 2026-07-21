@@ -1,9 +1,15 @@
 export interface Customer {
   id?: number;
-  firstName: string;
-  lastName: string;
-  email: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
   phoneNumber?: string;
+
   address?: string;
-  country: string;
+
+  state?: string;
+  city?: string;
+  pincode?: string;
+
+  country?: string;
 }

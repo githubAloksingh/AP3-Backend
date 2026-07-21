@@ -75,7 +75,7 @@ public class AccountController {
 
     /**
      * DELETE /api/accounts/{id}
-     * Closes/deletes an account by its ID.
+     * Closes/deletes an account by its ID (Admin only).
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAccount(
@@ -83,5 +83,53 @@ public class AccountController {
             @CurrentUser AuthenticatedUser user) {
         accountService.deleteAccount(id, user);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * POST /api/accounts/{id}/request-deletion
+     * Submits an account deletion request for admin approval.
+     */
+    @PostMapping("/{id}/request-deletion")
+    public ResponseEntity<AccountDTO> requestAccountDeletion(
+            @PathVariable Long id,
+            @CurrentUser AuthenticatedUser user) {
+        AccountDTO account = accountService.requestAccountDeletion(id, user);
+        return ResponseEntity.ok(account);
+    }
+
+    /**
+     * POST /api/accounts/{id}/approve-deletion
+     * Approves and executes account deletion (Admin only).
+     */
+    @PostMapping("/{id}/approve-deletion")
+    public ResponseEntity<AccountDTO> approveAccountDeletion(
+            @PathVariable Long id,
+            @CurrentUser AuthenticatedUser user) {
+        AccountDTO account = accountService.approveAccountDeletion(id, user);
+        return ResponseEntity.ok(account);
+    }
+
+    /**
+     * POST /api/accounts/{id}/reject-deletion
+     * Rejects account deletion request (Admin only).
+     */
+    @PostMapping("/{id}/reject-deletion")
+    public ResponseEntity<AccountDTO> rejectAccountDeletion(
+            @PathVariable Long id,
+            @CurrentUser AuthenticatedUser user) {
+        AccountDTO account = accountService.rejectAccountDeletion(id, user);
+        return ResponseEntity.ok(account);
+    }
+
+    /**
+     * PUT /api/accounts/{id}/switch-type
+     * Switches account type between SAVINGS and CURRENT.
+     */
+    @PutMapping("/{id}/switch-type")
+    public ResponseEntity<AccountDTO> switchAccountType(
+            @PathVariable Long id,
+            @CurrentUser AuthenticatedUser user) {
+        AccountDTO updatedAccount = accountService.switchAccountType(id, user);
+        return ResponseEntity.ok(updatedAccount);
     }
 }

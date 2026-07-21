@@ -39,6 +39,9 @@ public class Account {
     @Column(name = "account_type", nullable = false)
     private AccountType accountType;
 
+    @Column(name = "deletion_requested", nullable = false)
+    private boolean deletionRequested = false;
+
     @PositiveOrZero(message = "Balance cannot be negative")
     @Column(name = "balance", nullable = false, precision = 15, scale = 2)
     private BigDecimal balance;

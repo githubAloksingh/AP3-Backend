@@ -6,6 +6,48 @@
   <div *ngIf="!loading()" class="row g-4">
     <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4"><div class="card-body"><h6 class="text-muted">Customers</h6><h2 class="fw-bold">{{ customers().length }}</h2></div></div></div>
     <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4"><div class="card-body"><h6 class="text-muted">Accounts</h6><h2 class="fw-bold">{{ accounts().length }}</h2></div></div></div>
+    <div class="col-md-4"><div class="card border-0 shadow-sm rounded-4 border-start border-danger border-4"><div class="card-body"><h6 class="text-muted">Deletion Requests</h6><h2 class="fw-bold text-danger">{{ pendingDeletionAccounts.length }}</h2></div></div></div>
+
+    <!-- Pending Account Deletion Requests Section -->
+    <div class="col-12" *ngIf="pendingDeletionAccounts.length > 0">
+      <div class="card border-0 shadow-sm rounded-4 border-top border-danger border-3">
+        <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold text-danger mb-0">⚠️ Pending Account Deletion Requests</h5>
+          <span class="badge bg-danger rounded-pill">{{ pendingDeletionAccounts.length }} Request(s)</span>
+        </div>
+        <div class="card-body px-4 py-3">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Account #</th>
+                  <th>Customer Name</th>
+                  <th>Type</th>
+                  <th class="text-end">Balance</th>
+                  <th class="text-center">Admin Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let req of pendingDeletionAccounts">
+                  <td class="font-monospace fw-bold">{{ req.accountNumber }}</td>
+                  <td>{{ req.customerName }}</td>
+                  <td><span class="badge bg-secondary">{{ req.accountType }}</span></td>
+                  <td class="text-end fw-bold">{{ req.balance | currency:'INR':'symbol' }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-success me-2 rounded-3" (click)="approveDeletion(req.id)" title="Approve and Delete Account">
+                      ✓ Accept & Delete
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary rounded-3" (click)="rejectDeletion(req.id)" title="Reject Request">
+                      ✕ Reject Request
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="col-lg-5">
       <div class="card border-0 shadow-sm rounded-4">
@@ -26,11 +68,7 @@
                   <div class="text-muted small">#{{ c.id }}</div>
                 </div>
                 <div class="text-muted small">{{ c.id }}</div>
-
-
-
               </div>
-
             </button>
           </div>
           <div *ngIf="customers().length === 0" class="text-muted mt-3">No customers found.</div>
@@ -57,13 +95,23 @@
                 <th>Account #</th>
                 <th>Type</th>
                 <th class="text-end">Balance</th>
+                <th class="text-center">Actions</th>
               </tr>
               </thead>
               <tbody>
               <tr *ngFor="let a of selectedCustomerAccounts">
-                <td>{{ a.accountNumber }}</td>
-                <td>{{ a.accountType }}</td>
+                <td class="font-monospace fw-bold">{{ a.accountNumber }}</td>
+                <td>
+                  <span class="badge" [ngClass]="a.accountType === 'SAVINGS' ? 'bg-primary' : 'bg-warning text-dark'">
+                    {{ a.accountType }}
+                  </span>
+                </td>
                 <td class="text-end fw-bold">{{ a.balance | currency:'INR':'symbol' }}</td>
+                <td class="text-center">
+                  <button class="btn btn-sm btn-outline-primary rounded-3" (click)="switchAccountType(a.id)" title="Switch Account Type">
+                    🔄 Switch to {{ a.accountType === 'SAVINGS' ? 'Current' : 'Savings' }}
+                  </button>
+                </td>
               </tr>
               </tbody>
             </table>
@@ -71,8 +119,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Transactions removed -->
   </div>
 </div>
 

@@ -35,7 +35,16 @@ export class AdminComponent implements OnInit {
     return customer ? `${customer.firstName} ${customer.lastName}` : '';
   }
 
+  get pendingDeletionAccounts(): Account[] {
+    return this.accounts().filter((a) => a.deletionRequested);
+  }
+
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  loadData(): void {
+    this.loading.set(true);
     let completed = 0;
     const done = () => {
       completed += 1;
@@ -62,8 +71,6 @@ export class AdminComponent implements OnInit {
         done();
       }
     });
-
-    // transactions removed
   }
 
   selectCustomer(customer: Customer): void {
@@ -71,4 +78,41 @@ export class AdminComponent implements OnInit {
     this.selectedCustomerId.set(customer.id);
   }
 
+  approveDeletion(accountId: number | undefined): void {
+    if (!accountId) return;
+    if (confirm('Are you sure you want to approve and permanently delete this account?')) {
+      this.accountService.approveAccountDeletion(accountId).subscribe({
+        next: () => {
+          this.loadData();
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Failed to approve deletion.');
+        }
+      });
+    }
+  }
+
+  rejectDeletion(accountId: number | undefined): void {
+    if (!accountId) return;
+    this.accountService.rejectAccountDeletion(accountId).subscribe({
+      next: () => {
+        this.loadData();
+      },
+      error: (err) => {
+        this.errorMessage.set(err.error?.message || 'Failed to reject deletion.');
+      }
+    });
+  }
+
+  switchAccountType(accountId: number | undefined): void {
+    if (!accountId) return;
+    this.accountService.switchAccountType(accountId).subscribe({
+      next: () => {
+        this.loadData();
+      },
+      error: (err) => {
+        this.errorMessage.set(err.error?.message || 'Failed to switch account type.');
+      }
+    });
+  }
 }

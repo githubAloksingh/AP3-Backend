@@ -17,7 +17,7 @@ export class AccountsListComponent implements OnInit {
   accounts = signal<Account[]>([]);
   loading = signal<boolean>(true);
   errorMessage = signal<string>('');
-  showBalances = signal<boolean>(false);
+  visibleAccountId = signal<number | null>(null);
 
   ngOnInit(): void {
     const customerId = this.authService.getCustomerId();
@@ -45,20 +45,36 @@ export class AccountsListComponent implements OnInit {
     });
   }
 
-  closeAccount(accountId: number | undefined): void {
+  requestDeletion(accountId: number | undefined): void {
     if (!accountId) return;
-    if (confirm('Are you sure you want to close this account? All remaining funds will be deleted, and this action cannot be undone.')) {
-      this.accountService.deleteAccount(accountId).subscribe({
+    if (confirm('Are you sure you want to request deletion of this account? Your request will be sent to the admin for approval.')) {
+      this.accountService.requestAccountDeletion(accountId).subscribe({
         next: () => {
-          console.log('[AccountsListComponent] Account closed successfully:', accountId);
           const customerId = this.authService.getCustomerId();
           if (customerId) {
             this.loadAccounts(customerId);
           }
         },
         error: (err) => {
-          console.error('[AccountsListComponent] Account close error:', err);
-          this.errorMessage.set(err.error?.message || 'Failed to close account.');
+          this.errorMessage.set(err.error?.message || 'Failed to submit deletion request.');
+        }
+      });
+    }
+  }
+
+  switchAccountType(account: Account): void {
+    if (!account.id) return;
+    const targetType = account.accountType === 'SAVINGS' ? 'CURRENT' : 'SAVINGS';
+    if (confirm(`Do you want to convert this account to a ${targetType} account?`)) {
+      this.accountService.switchAccountType(account.id).subscribe({
+        next: () => {
+          const customerId = this.authService.getCustomerId();
+          if (customerId) {
+            this.loadAccounts(customerId);
+          }
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Failed to switch account type.');
         }
       });
     }
@@ -70,7 +86,14 @@ export class AccountsListComponent implements OnInit {
     return `${'•'.repeat(Math.max(0, accountNumber.length - visibleDigits))}${accountNumber.slice(-visibleDigits)}`;
   }
 
-  protected toggleBalances(): void {
-    this.showBalances.update(value => !value);
+  protected toggleBalance(accountId: number | undefined): void {
+
+    if (!accountId) return;
+
+    this.visibleAccountId.update(current =>
+      current === accountId ? null : accountId
+    );
+
   }
+
 }

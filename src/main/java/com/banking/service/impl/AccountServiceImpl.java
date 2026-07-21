@@ -108,12 +108,76 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
 
-        // Verify ownership: Admin or the owner customer
+        if (!"ROLE_ADMIN".equals(user.role())) {
+            throw new RuntimeException("Direct deletion is not permitted for customers. Please request account deletion for admin approval.");
+        }
+
+        accountRepository.delete(account);
+    }
+
+    @Override
+    @Transactional
+    public AccountDTO requestAccountDeletion(Long id, AuthenticatedUser user) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+
         if (!"ROLE_ADMIN".equals(user.role()) && !account.getCustomer().getId().equals(user.customerId())) {
             throw new ResourceNotFoundException("Account not found with id: " + id);
         }
 
+        account.setDeletionRequested(true);
+        Account saved = accountRepository.save(account);
+        return mapToDTO(saved);
+    }
+
+    @Override
+    @Transactional
+    public AccountDTO approveAccountDeletion(Long id, AuthenticatedUser user) {
+        if (!"ROLE_ADMIN".equals(user.role())) {
+            throw new RuntimeException("Access denied: Only admins can approve account deletion.");
+        }
+
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+
+        AccountDTO dto = mapToDTO(account);
         accountRepository.delete(account);
+        return dto;
+    }
+
+    @Override
+    @Transactional
+    public AccountDTO rejectAccountDeletion(Long id, AuthenticatedUser user) {
+        if (!"ROLE_ADMIN".equals(user.role())) {
+            throw new RuntimeException("Access denied: Only admins can reject account deletion.");
+        }
+
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+
+        account.setDeletionRequested(false);
+        Account saved = accountRepository.save(account);
+        return mapToDTO(saved);
+    }
+
+    @Override
+    @Transactional
+    public AccountDTO switchAccountType(Long id, AuthenticatedUser user) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+
+        if (!"ROLE_ADMIN".equals(user.role()) && !account.getCustomer().getId().equals(user.customerId())) {
+            throw new ResourceNotFoundException("Account not found with id: " + id);
+        }
+
+        if (account.getAccountType() == Account.AccountType.SAVINGS) {
+            account.setAccountType(Account.AccountType.CURRENT);
+        } else {
+            account.setAccountType(Account.AccountType.SAVINGS);
+        }
+
+        Account saved = accountRepository.save(account);
+        return mapToDTO(saved);
     }
 
     /**
@@ -127,6 +191,7 @@ public class AccountServiceImpl implements AccountService {
         dto.setBalance(account.getBalance());
         dto.setCustomerId(account.getCustomer().getId());
         dto.setCustomerName(account.getCustomer().getFirstName() + " " + account.getCustomer().getLastName());
+        dto.setDeletionRequested(account.isDeletionRequested());
         return dto;
     }
 }

@@ -51,6 +51,27 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  get phonePrefix(): string {
+    const country = this.customer.country?.trim().toUpperCase();
+    if (country === 'USA' || country === 'US' || country === 'CANADA') {
+      return '+1';
+    }
+    if (country === 'UK') {
+      return '+44';
+    }
+    return '+91'; // Default +91 for India and others
+  }
+
+  onPhoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/[^0-9]/g, '');
+    if (value.length > 10) {
+      value = value.substring(0, 10);
+    }
+    input.value = value;
+    this.customer.phoneNumber = value;
+  }
+
   onSubmit(): void {
     const customerId = this.authService.getCustomerId();
     if (!customerId) return;
@@ -88,5 +109,25 @@ export class ProfileComponent implements OnInit {
         this.errorMessage.set(err.error?.message || 'Failed to update profile.');
       }
     });
+
   }
+  states = [
+  { name: 'Delhi', pincode: '110001' },
+  { name: 'Rajasthan', pincode: '302001' },
+  { name: 'Maharashtra', pincode: '400001' },
+  { name: 'Haryana', pincode: '122001' },
+  { name: 'Punjab', pincode: '141001' }
+];
+
+onStateChange() {
+
+  const selected = this.states.find(
+      s => s.name === this.customer.state
+  );
+
+  if (selected) {
+      this.customer.pincode = selected.pincode;
+  }
+
+}
 }

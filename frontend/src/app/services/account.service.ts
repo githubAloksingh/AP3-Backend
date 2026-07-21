@@ -27,4 +27,20 @@ export class AccountService {
   deleteAccount(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  requestAccountDeletion(id: number): Observable<Account> {
+    return this.http.post<Account>(`${this.apiUrl}/${id}/request-deletion`, {});
+  }
+
+  approveAccountDeletion(id: number): Observable<Account> {
+    return this.http.post<Account>(`${this.apiUrl}/${id}/approve-deletion`, {});
+  }
+
+  rejectAccountDeletion(id: number): Observable<Account> {
+    return this.http.post<Account>(`${this.apiUrl}/${id}/reject-deletion`, {});
+  }
+
+  switchAccountType(id: number): Observable<Account> {
+    return this.http.put<Account>(`${this.apiUrl}/${id}/switch-type`, {});
+  }
 }

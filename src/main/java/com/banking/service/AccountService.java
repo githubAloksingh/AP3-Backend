@@ -36,4 +36,24 @@ public interface AccountService {
      * Close (delete) an account by its ID.
      */
     void deleteAccount(Long id, AuthenticatedUser user);
+
+    /**
+     * Submit a request to delete an account (user action).
+     */
+    AccountDTO requestAccountDeletion(Long id, AuthenticatedUser user);
+
+    /**
+     * Approve and execute account deletion (admin action).
+     */
+    AccountDTO approveAccountDeletion(Long id, AuthenticatedUser user);
+
+    /**
+     * Reject account deletion request (admin action).
+     */
+    AccountDTO rejectAccountDeletion(Long id, AuthenticatedUser user);
+
+    /**
+     * Switch account type between SAVINGS and CURRENT.
+     */
+    AccountDTO switchAccountType(Long id, AuthenticatedUser user);
 }

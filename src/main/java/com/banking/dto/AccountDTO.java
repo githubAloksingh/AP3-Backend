@@ -33,4 +33,6 @@ public class AccountDTO {
     private Long customerId;
 
     private String customerName; // For response purposes only
+
+    private boolean deletionRequested;
 }

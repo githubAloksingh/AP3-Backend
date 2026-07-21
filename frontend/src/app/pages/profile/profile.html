@@ -39,21 +39,76 @@
             </div>
 
             <div class="mb-3">
-              <label for="phoneNumber" class="form-label">Phone Number</label>
-              <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control rounded-3" placeholder="10-digit mobile number" [(ngModel)]="customer.phoneNumber" pattern="^[0-9]{10}$" />
-              <div class="form-text">Must be exactly 10 digits.</div>
+              <label for="country" class="form-label">Country</label>
+              <select id="country" name="country" class="form-select rounded-3 text-uppercase" [(ngModel)]="customer.country" required>
+                <option value="INDIA">India (+91)</option>
+                <option value="USA">USA (+1)</option>
+                <option value="UK">UK (+44)</option>
+              </select>
+              <div class="form-text">Selecting country auto-applies the corresponding country code.</div>
             </div>
 
             <div class="mb-3">
-              <label for="country" class="form-label">Country</label>
-              <input type="text" id="country" name="country" class="form-control rounded-3 text-uppercase" [(ngModel)]="customer.country" required placeholder="INDIA" />
-              <div class="form-text">Used for transfer region validation. India users can pay only India users.</div>
+              <label for="phoneNumber" class="form-label">Mobile Number</label>
+              <div class="input-group">
+                <span class="input-group-text rounded-start-3 bg-light font-monospace fw-bold">{{ phonePrefix }}</span>
+                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control rounded-end-3" placeholder="10-digit mobile number" [(ngModel)]="customer.phoneNumber" (input)="onPhoneInput($event)" maxlength="10" pattern="^[0-9]{10}$" required />
+              </div>
+              <div class="form-text">Numbers only, exactly 10 digits (no extra characters allowed).</div>
             </div>
 
-            <div class="mb-4">
-              <label for="address" class="form-label">Address</label>
-              <textarea id="address" name="address" class="form-control rounded-3" rows="3" placeholder="Your address details" [(ngModel)]="customer.address"></textarea>
-            </div>
+            <div class="mb-3">
+  <label>Address Line 1</label>
+  <input
+    type="text"
+    class="form-control"
+    [(ngModel)]="customer.addressLine1"
+    name="addressLine1">
+</div>
+
+<div class="mb-3">
+  <label>Address Line 2</label>
+  <input
+    type="text"
+    class="form-control"
+    [(ngModel)]="customer.addressLine2"
+    name="addressLine2">
+</div>
+
+<div class="mb-3">
+  <label>State</label>
+
+  <select
+      class="form-select"
+      [(ngModel)]="customer.state"
+      name="state"
+      (change)="onStateChange()">
+
+      <option *ngFor="let state of states" [value]="state.name">
+          {{state.name}}
+      </option>
+
+  </select>
+</div>
+
+<div class="mb-3">
+  <label>City</label>
+
+  <input
+      class="form-control"
+      [(ngModel)]="customer.city"
+      name="city">
+</div>
+
+<div class="mb-3">
+  <label>Pincode</label>
+
+  <input
+      class="form-control"
+      [(ngModel)]="customer.pincode"
+      maxlength="6"
+      name="pincode">
+</div>
 
             <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3" [disabled]="saving() || !profileForm.valid">
               <span *ngIf="saving()" class="spinner-border spinner-border-sm me-2"></span>

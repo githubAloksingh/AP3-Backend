@@ -5,4 +5,5 @@ export interface Account {
   balance: number;
   customerId: number;
   customerName?: string;
+  deletionRequested?: boolean;
 }

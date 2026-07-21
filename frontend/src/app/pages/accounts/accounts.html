@@ -2,71 +2,159 @@
   <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
     <div>
       <h2 class="fw-bold text-dark mb-1">Bank Accounts</h2>
-      <p class="text-muted mb-0">View all your active savings and current accounts.</p>
+      <p class="text-muted mb-0">
+        View all your active savings and current accounts.
+      </p>
     </div>
+
     <div class="mt-2 mt-sm-0">
       <a routerLink="/accounts/create" class="btn btn-primary d-flex align-items-center">
-        <span class="fs-5 me-2">+</span> Open New Account
+        <span class="fs-5 me-2">+</span>
+        Open New Account
       </a>
     </div>
   </div>
 
-  <div *ngIf="errorMessage()" class="alert alert-danger" role="alert">
+  <div *ngIf="errorMessage()" class="alert alert-danger">
     {{ errorMessage() }}
   </div>
 
   <div *ngIf="loading()" class="text-center my-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+    <div class="spinner-border text-primary"></div>
   </div>
 
   <div *ngIf="!loading() && !errorMessage()">
+
     <div *ngIf="accounts().length === 0" class="text-center py-5 bg-light rounded-4">
       <h5 class="fw-bold mb-2">No Accounts Found</h5>
-      <p class="text-muted mb-4">Get started by opening your first bank account today.</p>
-      <a routerLink="/accounts/create" class="btn btn-primary">Open First Account</a>
+
+      <p class="text-muted mb-4">
+        Get started by opening your first bank account today.
+      </p>
+
+      <a routerLink="/accounts/create" class="btn btn-primary">
+        Open First Account
+      </a>
     </div>
 
     <div *ngIf="accounts().length > 0" class="row">
+
       <div *ngFor="let account of accounts()" class="col-md-6 mb-4">
+
         <div class="card shadow-sm border-0 rounded-4 overflow-hidden h-100">
-          <div class="card-header border-0 d-flex justify-content-between align-items-center py-3"
-               [ngClass]="account.accountType === 'SAVINGS' ? 'bg-primary-subtle text-primary-emphasis' : 'bg-warning-subtle text-warning-emphasis'">
-            <span class="fw-bold text-uppercase tracking-wider">{{ account.accountType }} Account</span>
-            <span class="badge bg-white text-dark rounded-pill shadow-xs">Active</span>
+
+          <div class="card-header border-0 d-flex justify-content-between align-items-center py-3" [ngClass]="account.accountType === 'SAVINGS'
+              ? 'bg-primary-subtle text-primary-emphasis'
+              : 'bg-warning-subtle text-warning-emphasis'">
+
+            <span class="fw-bold text-uppercase">
+              {{ account.accountType }} Account
+            </span>
+
+            <span *ngIf="!account.deletionRequested" class="badge bg-white text-dark rounded-pill">
+
+              Active
+
+            </span>
+
+            <span *ngIf="account.deletionRequested" class="badge bg-danger rounded-pill">
+
+              Deletion Pending Admin Approval
+
+            </span>
+
           </div>
+
           <div class="card-body p-4">
-            <h6 class="text-muted text-uppercase fs-7 mb-2">Account Number</h6>
-            <h4 class="font-monospace fw-bold mb-3 text-dark">{{ maskAccountNumber(account.accountNumber) }}</h4>
+
+            <h6 class="text-muted text-uppercase mb-2">
+              Account Number
+            </h6>
+
+            <h4 class="font-monospace fw-bold mb-3">
+              {{ maskAccountNumber(account.accountNumber) }}
+            </h4>
 
             <div class="row align-items-center mt-4">
+
               <div class="col-6">
-                <span class="text-muted d-block fs-7">Owner</span>
-                <strong class="text-dark">{{ account.customerName }}</strong>
+
+                <span class="text-muted d-block">
+                  Owner
+                </span>
+
+                <strong>
+                  {{ account.customerName }}
+                </strong>
+
               </div>
+
+              <!-- Balance Section -->
+
               <div class="col-6 text-end">
-                <span class="text-muted d-block fs-7">Balance</span>
+
+                <span class="text-muted d-block">
+                  Balance
+                </span>
+
                 <div class="d-flex justify-content-end align-items-center gap-2">
-                  <h3 *ngIf="showBalances()" class="fw-bold text-dark mb-0">{{ account.balance | currency:'INR':'symbol' }}</h3>
-                  <span *ngIf="!showBalances()" class="visually-hidden">Balance hidden</span>
-                  <button type="button" class="btn btn-sm btn-link text-dark p-0" (click)="toggleBalances()"
-                    [attr.aria-label]="showBalances() ? 'Hide balances' : 'Show balances'"
-                    [title]="showBalances() ? 'Hide balances' : 'Show balances'">
-                    {{ showBalances() ? '🙈' : '👁' }}
+
+                  <h3 *ngIf="visibleAccountId() === account.id" class="fw-bold text-dark mb-0">
+
+                    {{ account.balance | currency:'INR':'symbol' }}
+
+                  </h3>
+
+                  <span *ngIf="visibleAccountId() !== account.id" class="fw-bold text-secondary">
+
+                    ₹ •••••••
+
+                  </span>
+
+                  <button class="btn btn-sm btn-link text-dark p-0" type="button" (click)="toggleBalance(account.id)">
+
+                    {{ visibleAccountId() === account.id ? '🙈' : '👁' }}
+
                   </button>
+
                 </div>
+
               </div>
+
             </div>
-            
-            <div class="mt-4 pt-3 border-top text-end">
-              <button class="btn btn-outline-danger btn-sm px-3" (click)="closeAccount(account.id)" title="Close this account permanently">
-                Close Account
+
+            <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+              <button class="btn btn-outline-secondary btn-sm" (click)="switchAccountType(account)">
+
+                🔄 Switch to
+                {{ account.accountType === 'SAVINGS' ? 'Current' : 'Savings' }}
+
               </button>
+
+              <button *ngIf="!account.deletionRequested" class="btn btn-outline-danger btn-sm"
+                (click)="requestDeletion(account.id)">
+
+                Request Deletion
+
+              </button>
+
+              <span *ngIf="account.deletionRequested" class="text-danger small fw-semibold">
+
+                ⏳ Deletion Requested (Awaiting Admin)
+
+              </span>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </div>
